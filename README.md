@@ -1,7 +1,5 @@
 # monsterCrawl
-**Description:** Crawls job description from monster.de
-**Current Version:** 0.1
-**Author:** Dynobo
+> Description: Crawls job description from monster.de
 
 ## Install
 Install dependencies:
