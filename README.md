@@ -1,5 +1,5 @@
 # monsterCrawl
-> Description: Crawls job description from monster.de
+> Crawls job description from job search engine monster.de
 
 ## Install
 Install dependencies:
