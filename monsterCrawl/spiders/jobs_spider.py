@@ -10,16 +10,20 @@ class linksSpider(scrapy.Spider):
     def __init__(self, search=None, *args, **kwargs):
         super(linksSpider, self).__init__(*args, **kwargs)
         urls = {
-            'itinstuttgart': '''https://www.monster.de/jobs/suche/
-                 ?q=IT
-                 &where=stuttgart
-                 &cy=de
-                 &client=power
-                 &rad=20''',
-            'datascience': '''https://www.monster.de/jobs/suche/
-                          ?q=Data-Science
-                          &cy=de
-                          &client=power'''
+            'itinstuttgart': (
+                 'https://www.monster.de/jobs/suche/'
+                 '?q=IT'
+                 '&where=stuttgart'
+                 '&cy=de'
+                 '&client=power'
+                 '&rad=20'
+                 ),
+            'datascience': (
+                          'https://www.monster.de/jobs/suche/'
+                          '?q=Data-Science'
+                          '&cy=de'
+                          '&client=power'
+                          )
         }
         url = urls[search]
         self.start_urls = []
@@ -28,19 +32,18 @@ class linksSpider(scrapy.Spider):
 
     def parse(self, response):
         for job in response.css('article.js_result_row'):
-            title = job.css('div.jobTitle *::text').extract()
-            company = job.css('div.company *::text').extract()
-            location = job.css('div.location *::text').extract()
-            postdate = job.css('div.postedDate time::attr(datetime)').extract()
-            postdate = ' '.join(postdate).strip()
+            title = job.css('.jobTitle *::text').extract()
+            company = job.css('.company *::text').extract()
+            location = job.css('.location *::text').extract()
+            postdate = job.css('.postedDate time::attr(datetime)').extract_first()
             postdate = re.sub('T\d\d:\d\d', '', postdate)
-            url = job.css('div.jobTitle a::attr(href)').extract_first()
+            url = job.css('.jobTitle a::attr(href)').extract_first()
             yield {
                 'title': ' '.join(title).strip(),
                 'company': ' '.join(company).strip(),
                 'location': ' '.join(location).strip(),
                 'date': postdate.strip(),
-                'url': url.strip()
+                'url': url.strip(),
             }
 
 

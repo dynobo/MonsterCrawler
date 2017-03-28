@@ -24,6 +24,12 @@ scrapy crawl jobs  -a search=datascience -o datascience.xml
 scrapy crawl jobs  -a search=itinstuttgart -o itinstuttgart.xml
 ```
 
+Third combine the xmls :
+
+```
+xml_grep --pretty_print indented --wrap items --descr '' --cond "item" *.xml > jobs.xml
+```
+
 ## Changelog
 **v0.1**
 Inital Spider
