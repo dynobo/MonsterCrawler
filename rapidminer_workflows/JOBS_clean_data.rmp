@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="7.4.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="7.4.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="advanced_file_connectors:read_xml" compatibility="7.4.000" expanded="true" height="68" name="Read XML" width="90" x="45" y="34">
+        <parameter key="file" value="/home/holger/Coding/monsterCrawl/jobs.xml"/>
+        <parameter key="xpath_for_examples" value="//items/item"/>
+        <enumeration key="xpaths_for_attributes">
+          <parameter key="xpath_for_attribute" value="url[1]/text()"/>
+          <parameter key="xpath_for_attribute" value="title[1]/text()"/>
+          <parameter key="xpath_for_attribute" value="company[1]/text()"/>
+          <parameter key="xpath_for_attribute" value="location[1]/text()"/>
+          <parameter key="xpath_for_attribute" value="date[1]/text()"/>
+          <parameter key="xpath_for_attribute" value="text[1]/text()"/>
+        </enumeration>
+        <parameter key="use_namespaces" value="true"/>
+        <list key="namespaces"/>
+        <parameter key="use_default_namespace" value="false"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value="yyyy-MM-dd"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="url.true.text.attribute"/>
+          <parameter key="1" value="title.true.text.attribute"/>
+          <parameter key="2" value="company.true.text.attribute"/>
+          <parameter key="3" value="location.true.text.attribute"/>
+          <parameter key="4" value="date.true.text.attribute"/>
+          <parameter key="5" value="text.true.text.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="true" class="filter_examples" compatibility="7.4.000" expanded="true" height="103" name="Filter Examples (2)" width="90" x="179" y="34">
+        <parameter key="parameter_expression" value="(length(trim(location)) &gt; 0) &amp;&amp; (length(trim(text)) &gt; 0)  &amp;&amp; (length(trim(title)) &gt; 0)"/>
+        <parameter key="condition_class" value="expression"/>
+        <parameter key="invert_filter" value="false"/>
+        <list key="filters_list">
+          <parameter key="filters_entry_key" value="title.is_not_missing."/>
+          <parameter key="filters_entry_key" value="location.is_not_missing."/>
+          <parameter key="filters_entry_key" value="text.is_not_missing."/>
+        </list>
+        <parameter key="filters_logic_and" value="true"/>
+        <parameter key="filters_check_metadata" value="true"/>
+        <description align="center" color="purple" colored="true" width="126">Filter out examples with missing fields (title, text, location)</description>
+      </operator>
+      <operator activated="true" class="remove_duplicates" compatibility="7.4.000" expanded="true" height="82" name="Remove Duplicates" width="90" x="313" y="34">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="text"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="treat_missing_values_as_duplicates" value="false"/>
+        <description align="center" color="purple" colored="true" width="126">Filter out duplicate job offers (&amp;quot;Promoted&amp;quot; ones)</description>
+      </operator>
+      <operator activated="true" class="python_scripting:execute_python" compatibility="7.4.000" expanded="true" height="82" name="Execute Python" width="90" x="447" y="34">
+        <parameter key="script" value="import pandas&#10;from langdetect import detect&#10;&#10;# rm_main is mandatory&#10;def rm_main(df):&#10;    df['language'] = df.apply(lambda row: detect(row['text']), axis=1)&#10;    return df"/>
+        <description align="center" color="red" colored="true" width="126">Identify language of job description</description>
+      </operator>
+      <operator activated="true" class="filter_examples" compatibility="7.4.000" expanded="true" height="103" name="Filter Examples" width="90" x="581" y="34">
+        <parameter key="parameter_expression" value=""/>
+        <parameter key="condition_class" value="custom_filters"/>
+        <parameter key="invert_filter" value="false"/>
+        <list key="filters_list">
+          <parameter key="filters_entry_key" value="language.equals.de"/>
+        </list>
+        <parameter key="filters_logic_and" value="true"/>
+        <parameter key="filters_check_metadata" value="true"/>
+        <description align="center" color="purple" colored="true" width="126">Filter out all languages but DE</description>
+      </operator>
+      <operator activated="true" class="text:data_to_documents" compatibility="7.4.001" expanded="true" height="68" name="Data to Documents" width="90" x="715" y="34">
+        <parameter key="select_attributes_and_weights" value="true"/>
+        <list key="specify_weights">
+          <parameter key="text" value="1.0"/>
+          <parameter key="title" value="1.0"/>
+          <parameter key="location" value="1.0"/>
+        </list>
+        <description align="center" color="orange" colored="true" width="126">Create Document Collection</description>
+      </operator>
+      <operator activated="true" class="store" compatibility="7.4.000" expanded="true" height="68" name="Store" width="90" x="849" y="34">
+        <parameter key="repository_entry" value="../data/jobs"/>
+      </operator>
+      <operator activated="false" class="com.aylien.textapi.rapidminer:aylien_language" compatibility="0.2.000" expanded="true" height="68" name="Detect Language" width="90" x="447" y="238">
+        <parameter key="connection" value="Aylen"/>
+        <parameter key="input_attribute" value="text"/>
+        <parameter key="Is input URL" value="false"/>
+      </operator>
+      <connect from_op="Read XML" from_port="output" to_op="Filter Examples (2)" to_port="example set input"/>
+      <connect from_op="Filter Examples (2)" from_port="example set output" to_op="Remove Duplicates" to_port="example set input"/>
+      <connect from_op="Remove Duplicates" from_port="example set output" to_op="Execute Python" to_port="input 1"/>
+      <connect from_op="Execute Python" from_port="output 1" to_op="Filter Examples" to_port="example set input"/>
+      <connect from_op="Filter Examples" from_port="example set output" to_op="Data to Documents" to_port="example set"/>
+      <connect from_op="Data to Documents" from_port="documents" to_op="Store" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

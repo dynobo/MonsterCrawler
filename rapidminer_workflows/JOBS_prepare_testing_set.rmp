@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="7.4.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="7.4.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="7.4.000" expanded="true" height="68" name="Retrieve" width="90" x="112" y="85">
+        <parameter key="repository_entry" value="//Local Repository/data/jobs"/>
+      </operator>
+      <operator activated="true" class="text:documents_to_data" compatibility="7.4.001" expanded="true" height="82" name="Documents to Data" width="90" x="246" y="85">
+        <parameter key="text_attribute" value="text"/>
+        <parameter key="add_meta_information" value="true"/>
+        <parameter key="datamanagement" value="double_sparse_array"/>
+      </operator>
+      <operator activated="true" class="python_scripting:execute_python" compatibility="7.4.000" expanded="true" height="82" name="Execute Python" width="90" x="380" y="85">
+        <parameter key="script" value="import pandas&#10;&#10;def rm_main(data):&#10;    &#10;    # Assign school grades to manually selected&#10;    # Job offers. Used to measure performance of &#10;    # Methods.&#10;  &#10;    data['grade'] = 0&#10;&#10;&#10;    # Grade 1&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/data-scientist-job-m%C3%BCnchen-bayern-deutschland-181011080.aspx?mescoid=1900267001001&amp;jobPosition=1&quot;] = 1&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/data-scientist-senior-it-consultant-m-w-job-berlin-berlin-deutschland-181728712.aspx?mescoid=1500123001001&amp;jobPosition=1&quot;] = 1&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/senior-consultant-data-science-machine-learning-analyst-m-w-job-darmstadt-weiterstadt-hessen-deutschland-171873642.aspx?mescoid=1300087001001&amp;jobPosition=1&quot;] = 1&#10;&#10;    # Grade 2&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/data-scientist-tax-f-m-stuttgart-or-d%C3%BCsseldorf-job-stuttgart-nordrhein-westfalen-deutschland-174331903.aspx?mescoid=1900267001001&amp;jobPosition=1&quot;] = 2&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/data-scientist-m-w-job-herzogenaurach-bayern-deutschland-180468599.aspx?mescoid=1900267001001&amp;jobPosition=1&quot;] = 2&#10;    &#10;    # Grade 3&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/data-scientist-m-w-job-bonn-nordrhein-westfalen-deutschland-178749784.aspx?mescoid=1900267001001&amp;jobPosition=1&quot;] = 3&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/senior-data-scientist-inhouse-m-w-job-m%C3%BCnchen-bayern-deutschland-182331001.aspx?mescoid=1900267001001&amp;jobPosition=1&quot;] = 3&#10;&#10;    # Grade 4&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/it-consultant-data-science-machine-learning-analyst-m-w-job-darmstadt-weiterstadt-hessen-deutschland-171873643.aspx?mescoid=1500123001001&amp;jobPosition=1&quot;] = 4&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/it-architekt-net-m-w-im-bereich-big-data-gesucht!-job-n%C3%BCrnberg-bayern-deutschland-180481524.aspx?mescoid=1500127001001&amp;jobPosition=1&quot;] = 4&#10;&#10;    # Grade 5&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/praktikant-in-im-bereich-business-intelligence-data-science-f%C3%BCr-die-otto-group-job-hamburg-hamburg-deutschland-181426581.aspx?mescoid=1500144001001&amp;jobPosition=1&quot;] = 5&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/beraterin-berater-gesch%C3%A4fts-und-it-architektur-job-frankfurt-d%C3%BCsseldorf-deutschland-175333029.aspx?mescoid=1500123001001&amp;jobPosition=1&quot;] = 5&#10;&#10;    # Grade 6&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/junior-berater-it-infrastrukturmanagement-m-w-snr-14489-job-rhein-main-k%C3%B6ln-d%C3%BCsseldorf-deutschland-182149478.aspx?mescoid=1500123001001&amp;jobPosition=1&quot;] = 6&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/it-projektmanager-teamleiter-applikations-und-serverbetrieb-m-w-job-stuttgart-baden-w%C3%BCrttemberg-deutschland-182104261.aspx?mescoid=1100011001001&amp;jobPosition=1&quot;] = 6&#10;    data['grade'][data['url'] == &quot;http://stellenanzeige.monster.de/sap-abap-entwickler-m-w-job-leinfelden-echterdingen-baden-w%C3%BCrttemberg-deutschland-180133803.aspx?mescoid=1500127001001&amp;jobPosition=1&quot;] = 6&#10;        &#10;    return data"/>
+        <description align="center" color="transparent" colored="false" width="126">Assign school grades to 15 Job offers manually.</description>
+      </operator>
+      <operator activated="true" class="filter_examples" compatibility="7.4.000" expanded="true" height="103" name="Filter Examples" width="90" x="514" y="85">
+        <parameter key="parameter_expression" value=""/>
+        <parameter key="condition_class" value="custom_filters"/>
+        <parameter key="invert_filter" value="false"/>
+        <list key="filters_list">
+          <parameter key="filters_entry_key" value="grade.gt.0"/>
+        </list>
+        <parameter key="filters_logic_and" value="true"/>
+        <parameter key="filters_check_metadata" value="true"/>
+      </operator>
+      <operator activated="true" class="text:data_to_documents" compatibility="7.4.001" expanded="true" height="68" name="Data to Documents" width="90" x="648" y="85">
+        <parameter key="select_attributes_and_weights" value="false"/>
+        <list key="specify_weights"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="7.4.000" expanded="true" height="68" name="Store" width="90" x="782" y="85">
+        <parameter key="repository_entry" value="../data/jobs_training"/>
+      </operator>
+      <connect from_op="Retrieve" from_port="output" to_op="Documents to Data" to_port="documents 1"/>
+      <connect from_op="Documents to Data" from_port="example set" to_op="Execute Python" to_port="input 1"/>
+      <connect from_op="Execute Python" from_port="output 1" to_op="Filter Examples" to_port="example set input"/>
+      <connect from_op="Filter Examples" from_port="example set output" to_op="Data to Documents" to_port="example set"/>
+      <connect from_op="Data to Documents" from_port="documents" to_op="Store" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
